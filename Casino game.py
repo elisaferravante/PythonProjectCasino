@@ -8,29 +8,40 @@ def load_profile():
            balance = float(file.readline().strip())
            games_played = int(file.readline().strip())
            win_ratio = float(file.readline().strip())
+
+
            return {"balance": balance, "games_played": games_played, "win_ratio": win_ratio}
    except FileNotFoundError:
-       return {"balance": 1000, "games_played": 0, "win_ratio": 0.0}
+       return {"balance": 1000, "games_played": 0, "win_ratio": 0.0}  # Default values
+
+
 
 
 def save_profile(profile):
    with open("casino_profile.txt", "w") as file:
-       file.write(f"{profile['balance']}\n")
+       file.write(f"{profile['balance']:.2f}\n")
        file.write(f"{profile['games_played']}\n")
-       file.write(f"{profile['win_ratio']}\n")
+       file.write(f"{profile['win_ratio']:.4f}\n")
 
 
 def start_casino():
   profile = load_profile()
   money = profile["balance"]
+
+
   print("Welcome to the Casino!")
   print(f"Current Balance: ${money:.2f}")
 
 
   if money <= 0:
       print("You have run out of money. Better luck next time!")
-      save_profile(profile)
+      profile["balance"] = money  # Ensures the updated balance is stored
+      save_profile(profile)  # Now it saves the correct balance
       return
+
+
+  profile["balance"] = money  # Ensures new balance is stored
+  save_profile(profile)  # Now it saves the correct value
 
 
   while money > 0:
@@ -148,7 +159,13 @@ def play_roulette(money, profile):
 
   print(f"Roulette spun: {result} ({color if result != 0 else 'green'})")
   print(f"{'You won!' if win else 'You lost!'} New balance: ${money:.2f}")
+
+
+  profile["balance"] = money
+  save_profile(profile)
   return money
+
+
 
 
 def play_blackjack(money, profile):
@@ -259,7 +276,13 @@ def play_blackjack(money, profile):
 
 
    print(f"New balance: ${money:.2f}")
+
+
+   profile["balance"] = money  # Ensures balance is updated in profile
+   save_profile(profile)  # Saves correct balance to file
    return money
+
+
 
 
 def play_slots(money, profile):
@@ -302,6 +325,10 @@ def play_slots(money, profile):
 
 
    print(f"New balance: ${money:.2f}")
+
+
+   profile["balance"] = money  # Ensures balance is updated in profile
+   save_profile(profile)  # Saves correct balance to file
    return money
 
 
